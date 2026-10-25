@@ -8,13 +8,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import com.example.yum.ui.Screens.CreateRecipeScreen
-import com.example.yum.ui.Screens.HomeScreen
-import com.example.yum.ui.Screens.LoginScreen
-import com.example.yum.ui.Screens.RegisterScreen
+import com.example.yum.ui.AppNavigation
+import com.example.yum.ui.AuthNavigation
 import com.example.yum.ui.theme.YumTheme
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.auth
@@ -45,9 +40,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun App() {
-//    var isLoggedIn by remember { mutableStateOf(supabase.auth.currentUserOrNull() != null) }
-    var registerNewUser by remember { mutableStateOf(false) }
-    var createRecipe by remember { mutableStateOf(false) }
+//    var registerNewUser by remember { mutableStateOf(false) }
+//    var createRecipe by remember { mutableStateOf(false) }
     val sessionStatus by supabase.auth.sessionStatus.collectAsState()
 
     when (sessionStatus) {
@@ -56,30 +50,34 @@ fun App() {
         }
 
         is SessionStatus.Authenticated -> {
-            if (createRecipe) {
-                CreateRecipeScreen(
-                    onSaveRecipe = { createRecipe = false }
-                )
-            } else {
-                HomeScreen(
-                    onCreateRecipe = {
-                        createRecipe = true
-                    }
-                )
-            }
+            AppNavigation()
+//
+//
+//            if (createRecipe) {
+//                CreateRecipeScreen(
+//                    onSaveRecipe = { createRecipe = false }
+//                )
+//            } else {
+//                HomeScreen(
+//                    onCreateRecipe = {
+//                        createRecipe = true
+//                    }
+//                )
+//            }
         }
 
         is SessionStatus.NotAuthenticated,
         is SessionStatus.RefreshFailure -> {
-            if (registerNewUser) {
-                RegisterScreen(
-                    onUserRegistered = { registerNewUser = false }
-                )
-            } else {
-                LoginScreen(
-                    onRegisterNewUser = { registerNewUser = true }
-                )
-            }
+            AuthNavigation()
+//            if (registerNewUser) {
+//                RegisterScreen(
+//                    onUserRegistered = { registerNewUser = false }
+//                )
+//            } else {
+//                LoginScreen(
+//                    onRegisterNewUser = { registerNewUser = true }
+//                )
+//            }
         }
     }
 }
