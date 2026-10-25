@@ -24,7 +24,8 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(modifier: Modifier = Modifier,
+               onCreateRecipe: () -> Unit) {
     val user = supabase.auth.currentUserOrNull()
     val scope = rememberCoroutineScope()
 
@@ -67,6 +68,11 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            Button(
+                onClick = onCreateRecipe
+            ) {
+                Text("+")
+            }
         }
 
     }
