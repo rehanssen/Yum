@@ -15,5 +15,8 @@ data class RecipeIngredient(
     @SerialName("sort_order")
     val sortOrder: Int = 0,
 
-    val notes: String? = null
+    val notes: String? = null,
+
+    @SerialName("group_number")
+    val groupNumber: Int = 0
 )
