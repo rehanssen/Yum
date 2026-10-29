@@ -15,9 +15,9 @@ data class Recipe(
     val visibility: String = "private",
 
     @SerialName("recipe_ingredients")
-    val recipeIngredients: List<RecipeIngredient>,
+    val recipeIngredients: List<RecipeIngredient> = emptyList(),
     @SerialName("recipe_steps")
-    val recipeSteps: List<RecipeStep>,
+    val recipeSteps: List<RecipeStep> = emptyList(),
 
     @SerialName("yield_quantity")
     val yieldQuantity: Double = 4.0,
