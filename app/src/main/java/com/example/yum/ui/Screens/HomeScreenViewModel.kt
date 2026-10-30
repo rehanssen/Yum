@@ -26,8 +26,6 @@ class HomeScreenViewModel(
     }
     var recipes by mutableStateOf<RecipeLoadingState<List<Recipe>>>(RecipeLoadingState.Loading)
         private set
-    var recipe by mutableStateOf<RecipeLoadingState<Recipe>>(RecipeLoadingState.Loading)
-        private set
 
     fun loadRecipes() {
         viewModelScope.launch {

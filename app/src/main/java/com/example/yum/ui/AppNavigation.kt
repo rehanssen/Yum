@@ -14,13 +14,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.yum.ui.Screens.CreateRecipeScreen
 import com.example.yum.ui.Screens.HomeScreen
 import com.example.yum.ui.Screens.ProfileScreen
+import com.example.yum.ui.Screens.RecipeScreen
 
 @Composable
 fun AppNavigation() {
@@ -76,11 +79,25 @@ fun AppNavigation() {
                 .padding(innerPadding),
             enterTransition = { fadeIn() },
             exitTransition = { fadeOut() }
-            ) {
+        ) {
             composable("home") {
-                HomeScreen(onCreateRecipe = {
-                    navController.navigate("create_recipe")
-                })
+                HomeScreen(
+                    onRecipeClick = { recipeId ->
+                        navController.navigate("recipe/$recipeId")
+                    },
+                    onCreateRecipe = {
+                        navController.navigate("create_recipe")
+                    })
+            }
+
+            composable("recipe/{recipeId}") { backStackEntry ->
+                val recipeId = backStackEntry.arguments?.getString("recipeId")
+
+                if (recipeId == null) {
+                    navController.popBackStack()
+                } else {
+                    RecipeScreen(recipeId = recipeId)
+                }
             }
 
             composable("create_recipe") {

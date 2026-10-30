@@ -24,7 +24,7 @@ class RecipeRepository(
                 Columns.raw("""
                     *,
                     recipe_ingredients(*),
-                    recipe_steps(*)
+                    recipe_steps!recipe_steps_recipe_id_fkey(*)
                 """.trimIndent())
             ) {
                 filter {
