@@ -2,12 +2,13 @@ package com.example.yum.Data
 
 import android.util.Log
 import com.example.yum.Model.Recipe
-import com.example.yum.supabase
+import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
+import jakarta.inject.Inject
 
-class RecipeRepository(
-
+class RecipeRepository @Inject constructor(
+    private val supabase: SupabaseClient
 ) {
     suspend fun getRecipes() : List<Recipe> {
         Log.i("Data fetching:", "Fetching recipes")

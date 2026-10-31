@@ -23,10 +23,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.yum.Model.Recipe
-import com.example.yum.supabase
 import com.example.yum.ui.RecipeLoadingState
+import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import kotlinx.coroutines.launch
 
@@ -36,10 +37,9 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     onRecipeClick: (String) -> Unit,
     onCreateRecipe: () -> Unit,
-    viewModel: HomeScreenViewModel = viewModel(
-        factory = HomeScreenViewModel.Factory
-    )
+    viewModel: HomeScreenViewModel = hiltViewModel(),
 ) {
+    val supabase = viewModel.supabase
     val user = supabase.auth.currentUserOrNull()
     val scope = rememberCoroutineScope()
 

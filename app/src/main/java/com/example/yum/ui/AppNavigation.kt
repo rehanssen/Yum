@@ -24,9 +24,12 @@ import com.example.yum.ui.Screens.CreateRecipeScreen
 import com.example.yum.ui.Screens.HomeScreen
 import com.example.yum.ui.Screens.ProfileScreen
 import com.example.yum.ui.Screens.RecipeScreen
+import io.github.jan.supabase.SupabaseClient
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(
+    supabase: SupabaseClient
+) {
     val navController = rememberNavController()
     var currentRoute = navController.currentBackStackEntryAsState()
         .value?.destination?.route

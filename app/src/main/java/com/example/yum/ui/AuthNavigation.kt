@@ -6,9 +6,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.yum.ui.Screens.LoginScreen
 import com.example.yum.ui.Screens.RegisterScreen
+import io.github.jan.supabase.SupabaseClient
 
 @Composable
-fun AuthNavigation() {
+fun AuthNavigation(
+    supabase: SupabaseClient
+) {
     val navController = rememberNavController()
 
     NavHost(

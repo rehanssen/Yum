@@ -11,37 +11,42 @@ import androidx.compose.runtime.getValue
 import com.example.yum.ui.AppNavigation
 import com.example.yum.ui.AuthNavigation
 import com.example.yum.ui.theme.YumTheme
+import dagger.hilt.android.AndroidEntryPoint
+import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.status.SessionStatus
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
+import javax.inject.Inject
 
-val supabase = createSupabaseClient(
-    supabaseUrl = "https://uhdpcvvakrwwxgotjpue.supabase.co",
-    supabaseKey = "sb_publishable_mWZNzSXL3anuC8lZUfTnEw_DJHsA1ie"
-) {
-    install(Auth)
-    install(Postgrest)
-}
+//val supabase = createSupabaseClient(
+//    supabaseUrl = "https://uhdpcvvakrwwxgotjpue.supabase.co",
+//    supabaseKey = "sb_publishable_mWZNzSXL3anuC8lZUfTnEw_DJHsA1ie"
+//) {
+//    install(Auth)
+//    install(Postgrest)
+//}
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var supabase: SupabaseClient
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         setContent {
             YumTheme {
-                App()
+                App(supabase)
             }
         }
     }
 }
 
 @Composable
-fun App() {
-//    var registerNewUser by remember { mutableStateOf(false) }
-//    var createRecipe by remember { mutableStateOf(false) }
+fun App(supabase: SupabaseClient) {
     val sessionStatus by supabase.auth.sessionStatus.collectAsState()
 
     when (sessionStatus) {
@@ -50,34 +55,12 @@ fun App() {
         }
 
         is SessionStatus.Authenticated -> {
-            AppNavigation()
-//
-//
-//            if (createRecipe) {
-//                CreateRecipeScreen(
-//                    onSaveRecipe = { createRecipe = false }
-//                )
-//            } else {
-//                HomeScreen(
-//                    onCreateRecipe = {
-//                        createRecipe = true
-//                    }
-//                )
-//            }
+            AppNavigation(supabase)
         }
 
         is SessionStatus.NotAuthenticated,
         is SessionStatus.RefreshFailure -> {
-            AuthNavigation()
-//            if (registerNewUser) {
-//                RegisterScreen(
-//                    onUserRegistered = { registerNewUser = false }
-//                )
-//            } else {
-//                LoginScreen(
-//                    onRegisterNewUser = { registerNewUser = true }
-//                )
-//            }
+            AuthNavigation(supabase)
         }
     }
 }
