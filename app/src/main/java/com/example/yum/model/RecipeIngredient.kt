@@ -1,4 +1,4 @@
-package com.example.yum.Model
+package com.example.yum.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

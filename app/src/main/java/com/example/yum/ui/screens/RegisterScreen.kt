@@ -1,4 +1,4 @@
-package com.example.yum.ui.Screens
+package com.example.yum.ui.screens
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -28,31 +28,43 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.hilt.navigation.compose.hiltViewModel
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(
-    onRegisterNewUser: () -> Unit
+fun RegisterScreen(
+    onUserRegistered: () -> Unit,
+    viewModel: AuthenticationViewModel = hiltViewModel()
 ) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var visiblePassword by remember { mutableStateOf(false) }
+//    var email by remember { mutableStateOf("") }
+//    var password1 by remember { mutableStateOf("") }
+//    var password2 by remember { mutableStateOf("") }
+//    var visiblePassword1 by remember { mutableStateOf(false) }
+//    var visiblePassword2 by remember { mutableStateOf(false) }
+
+    var email = viewModel.email
+    var password = viewModel.password
+    var confirmPassword = viewModel.confirmPassword
+
+    var visiblePassword = viewModel.visiblePassword
+    var visibleConfirmPassword = viewModel.visibleConfirmPassword
+
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val scope = rememberCoroutineScope()
 
-    Scaffold { innerPadding ->
+    Scaffold() { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Center
         ) {
-            Text("Login")
+            Text("Registrer")
 
             TextField(
                 value = email,
@@ -63,71 +75,49 @@ fun LoginScreen(
 
             TextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = { viewModel.password = it },
                 label = { Text("Passord") },
                 trailingIcon = {
-                    IconButton(onClick = { visiblePassword = !visiblePassword }) {
+                    IconButton(onClick = { viewModel.visiblePassword = !visiblePassword }) {
                         Icon(
-                            imageVector = if (visiblePassword)
-                                Icons.Default.VisibilityOff
-                            else Icons.Default.Visibility,
-                            contentDescription = "Toggle password visibility",
+                            imageVector = if (viewModel.visiblePassword) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                            contentDescription = "Toggle password visibility"
                         )
                     }
                 },
                 visualTransformation = if (visiblePassword) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions =
-                    KeyboardOptions(
-                        imeAction = ImeAction.Go
-                    ),
-                keyboardActions = KeyboardActions(
-                    onGo = {
-                        keyboardController?.hide()
-                        logIn(scope, email, password)
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+
+            )
+
+            TextField(
+                value = confirmPassword,
+                onValueChange = { viewModel.confirmPassword = it },
+                label = { Text("Gjenta passord") },
+                trailingIcon = {
+                    IconButton(onClick = { viewModel.visibleConfirmPassword = !visibleConfirmPassword }) {
+                        Icon(
+                            imageVector = if (visibleConfirmPassword) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                            contentDescription = "Toggle password visibility"
+                        )
                     }
-                )
+                },
+                visualTransformation = if (visibleConfirmPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
+                keyboardActions = KeyboardActions(onGo = {
+                    keyboardController?.hide()
+                    viewModel.signUp(email, password)
+                })
             )
 
             Button(
                 onClick = {
-                    logIn(scope, email, password)
-                }
+                    viewModel.signUp(email, password)
+                },
+                enabled = (password != "" && password == confirmPassword)
             ) {
-                Text("Login")
-            }
-
-            Button(
-                onClick = {
-                    onRegisterNewUser()
-                }) {
-                Text("Registrer ny bruker")
+                Text("Registrer")
             }
         }
     }
-    Text("Login screen")
-
 }
-
-fun logIn(
-    scope: CoroutineScope,
-    email: String,
-    password: String
-) {
-    scope.launch {
-        try {
-            Log.d("Login debug", "Login with e-mail ($email)")
-            supabase.auth.signInWith(Email) {
-                this.email = email
-                this.password = password
-            }
-        } catch (e: Exception) {
-            Log.e(
-                "LoginError",
-                "Error during supabase login with email and password",
-                e
-            )
-        }
-    }
-}
-
-

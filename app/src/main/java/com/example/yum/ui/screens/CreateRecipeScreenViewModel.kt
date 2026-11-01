@@ -1,11 +1,12 @@
-package com.example.yum.ui.Screens
+package com.example.yum.ui.screens
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 
+@HiltViewModel
 class CreateRecipeScreenViewModel : ViewModel() {
     var title: String by mutableStateOf("")
     var description: String by mutableStateOf("")

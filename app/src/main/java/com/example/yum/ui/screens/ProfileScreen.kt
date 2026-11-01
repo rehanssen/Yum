@@ -1,4 +1,4 @@
-package com.example.yum.ui.Screens
+package com.example.yum.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,10 +8,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.yum.supabase
+import androidx.hilt.navigation.compose.hiltViewModel
 import io.github.jan.supabase.auth.auth
 import kotlinx.coroutines.launch
 import kotlin.time.ExperimentalTime
@@ -19,11 +18,9 @@ import kotlin.time.ExperimentalTime
 @OptIn(ExperimentalTime::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
+    viewModel: AuthenticationViewModel = hiltViewModel()
 ) {
-    val scope = rememberCoroutineScope()
-    val user = supabase.auth.currentUserOrNull()
-
-
+    val user = viewModel.getUserOrNull()
 
     Column(
         modifier = Modifier
@@ -35,9 +32,7 @@ fun ProfileScreen(
             actions = {
                 TextButton(
                     onClick = {
-                        scope.launch {
-                            supabase.auth.signOut()
-                        }
+                        viewModel.logout()
                     }
                 ) {
                     Text("Logg ut")

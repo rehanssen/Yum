@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.yum.ui.Screens.LoginScreen
-import com.example.yum.ui.Screens.RegisterScreen
+import com.example.yum.ui.screens.LoginScreen
+import com.example.yum.ui.screens.RegisterScreen
 import io.github.jan.supabase.SupabaseClient
 
 @Composable

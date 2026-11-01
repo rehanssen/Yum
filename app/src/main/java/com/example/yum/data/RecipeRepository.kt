@@ -1,11 +1,11 @@
-package com.example.yum.Data
+package com.example.yum.data
 
 import android.util.Log
-import com.example.yum.Model.Recipe
+import com.example.yum.model.Recipe
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
-import jakarta.inject.Inject
+import javax.inject.Inject
 
 class RecipeRepository @Inject constructor(
     private val supabase: SupabaseClient

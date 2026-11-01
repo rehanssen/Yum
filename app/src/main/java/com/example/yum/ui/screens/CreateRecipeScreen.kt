@@ -1,27 +1,22 @@
-package com.example.yum.ui.Screens
+package com.example.yum.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.Label
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun CreateRecipeScreen(
-    viewModel: CreateRecipeScreenViewModel = viewModel(),
-    onSaveRecipe: () -> Unit
+    onSaveRecipe: () -> Unit,
+    viewModel: CreateRecipeScreenViewModel = hiltViewModel()
 ) {
-
-
     val id: String? = null
 
     val ownerId: String

@@ -14,16 +14,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import com.example.yum.ui.Screens.CreateRecipeScreen
-import com.example.yum.ui.Screens.HomeScreen
-import com.example.yum.ui.Screens.ProfileScreen
-import com.example.yum.ui.Screens.RecipeScreen
+import com.example.yum.ui.screens.CreateRecipeScreen
+import com.example.yum.ui.screens.HomeScreen
+import com.example.yum.ui.screens.ProfileScreen
+import com.example.yum.ui.screens.RecipeScreen
 import io.github.jan.supabase.SupabaseClient
 
 @Composable

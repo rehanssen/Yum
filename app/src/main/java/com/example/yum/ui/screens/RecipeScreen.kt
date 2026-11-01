@@ -1,7 +1,5 @@
-package com.example.yum.ui.Screens
+package com.example.yum.ui.screens
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,16 +12,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.yum.Data.RecipeRepository
 import com.example.yum.ui.RecipeLoadingState
 
 @Composable
 fun RecipeScreen(
     recipeId: String,
-    viewModel: RecipeScreenViewModel = viewModel(
-        factory = RecipeScreenViewModel.Factory
-    )
+    viewModel: RecipeScreenViewModel = hiltViewModel()
 ) {
     val recipeLoadingState = viewModel.recipe
 
