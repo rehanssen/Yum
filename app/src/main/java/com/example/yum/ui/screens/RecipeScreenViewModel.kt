@@ -21,6 +21,7 @@ class RecipeScreenViewModel @Inject constructor(
 ) : ViewModel() {
     var recipe by mutableStateOf<RecipeLoadingState<Recipe>>(RecipeLoadingState.Loading)
         private set
+    var ingredientsVisible by mutableStateOf(true)
 
     fun loadRecipe(id: String) {
         viewModelScope.launch {
@@ -31,5 +32,9 @@ class RecipeScreenViewModel @Inject constructor(
                 RecipeLoadingState.Failed(e.message ?: "Ukjent feil")
             }
         }
+    }
+
+    fun toggleIngredientPanel() {
+        ingredientsVisible = !ingredientsVisible
     }
 }

@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.yum.model.Recipe
 import com.example.yum.ui.RecipeLoadingState
@@ -82,8 +83,7 @@ fun HomeScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             when (loadingState) {
                 is RecipeLoadingState.Loading -> {
@@ -93,7 +93,10 @@ fun HomeScreen(
                     Text(loadingState.message)
                 }
                 is RecipeLoadingState.Loaded -> {
-                    LazyColumn {
+                    LazyColumn(
+                        modifier = Modifier.padding(4.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
                         items(loadingState.data) { recipe ->
                             ElevatedCard(
                                 modifier = Modifier
@@ -105,7 +108,7 @@ fun HomeScreen(
                                     onRecipeClick(recipe.id!!)
                                 }
                             ) {
-                            Text(recipe.title)
+                            Text(recipe.title, modifier = Modifier.padding(2.dp))
                                 Text("  ${recipe.description}")
                             }
                         }

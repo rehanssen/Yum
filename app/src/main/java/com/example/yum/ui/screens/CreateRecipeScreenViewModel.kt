@@ -5,9 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 @HiltViewModel
-class CreateRecipeScreenViewModel : ViewModel() {
+class CreateRecipeScreenViewModel @Inject constructor() : ViewModel() {
     var title: String by mutableStateOf("")
     var description: String by mutableStateOf("")
     var yieldQuantity: String by mutableStateOf("4.0")
