@@ -68,18 +68,6 @@ fun AppNavigation(
                 contentColor = MaterialTheme.colorScheme.onSurface
             ) {
                 NavigationBarItem(
-                    selected = currentRoute == "home",
-                    onClick = { navController.navigate("home") },
-                    icon = {
-                        Icon(
-                            Icons.Default.Home,
-                            contentDescription = "Hjem"
-                        )
-                    },
-                    label = { Text("Hjem") }
-                )
-
-                NavigationBarItem(
                     selected = currentRoute == "create_recipe",
                     onClick = { navController.navigate("create_recipe") },
                     icon = {
@@ -89,6 +77,18 @@ fun AppNavigation(
                         )
                     },
                     label = { Text("Ny oppskrift") }
+                )
+
+                NavigationBarItem(
+                    selected = currentRoute == "home",
+                    onClick = { navController.navigate("home") },
+                    icon = {
+                        Icon(
+                            Icons.Default.Home,
+                            contentDescription = "Hjem"
+                        )
+                    },
+                    label = { Text("Hjem") }
                 )
 
                 NavigationBarItem(
