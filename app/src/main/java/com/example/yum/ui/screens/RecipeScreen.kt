@@ -21,11 +21,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.yum.model.Recipe
@@ -155,6 +158,7 @@ fun IngredientsPanel(
     ingredientsVisible: Boolean,
     onToggleVisibility: () -> Unit
 ) {
+    val groupedIngredients = ingredients.groupBy { it.groupNumber }.toSortedMap()
     AnimatedContent(
         targetState = ingredientsVisible,
         transitionSpec = {
@@ -176,11 +180,25 @@ fun IngredientsPanel(
         ) {
             if (visible) {
                 LazyColumn(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f).padding(8.dp)
                 ) {
-                    item { Text("Ingredienser") }
-                    items(ingredients) { ingredient ->
-                        Text("${ingredient.quantity} ${ingredient.unit} ${ingredient.name}")
+                    item { Text(
+                        text = "Ingredienser",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    }
+
+                    groupedIngredients.forEach { (group, groupIngredients) ->
+                        item {
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                thickness = 2.dp,
+                            )
+                        }
+
+                        items(groupIngredients) { ingredient ->
+                            Text("${ingredient.quantity} ${ingredient.unit} ${ingredient.name}")
+                        }
                     }
                 }
             }
