@@ -20,13 +20,6 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import javax.inject.Inject
 
-//val supabase = createSupabaseClient(
-//    supabaseUrl = "https://uhdpcvvakrwwxgotjpue.supabase.co",
-//    supabaseKey = "sb_publishable_mWZNzSXL3anuC8lZUfTnEw_DJHsA1ie"
-//) {
-//    install(Auth)
-//    install(Postgrest)
-//}
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

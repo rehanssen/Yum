@@ -39,11 +39,6 @@ fun RegisterScreen(
     onUserRegistered: () -> Unit,
     viewModel: AuthenticationViewModel = hiltViewModel()
 ) {
-//    var email by remember { mutableStateOf("") }
-//    var password1 by remember { mutableStateOf("") }
-//    var password2 by remember { mutableStateOf("") }
-//    var visiblePassword1 by remember { mutableStateOf(false) }
-//    var visiblePassword2 by remember { mutableStateOf(false) }
 
     var email = viewModel.email
     var password = viewModel.password
@@ -52,11 +47,9 @@ fun RegisterScreen(
     var visiblePassword = viewModel.visiblePassword
     var visibleConfirmPassword = viewModel.visibleConfirmPassword
 
-
     val keyboardController = LocalSoftwareKeyboardController.current
-    val scope = rememberCoroutineScope()
 
-    Scaffold() { innerPadding ->
+    Scaffold { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -68,14 +61,20 @@ fun RegisterScreen(
 
             TextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = {
+                    viewModel.email = it
+                    viewModel.authStateMessage = null
+                },
                 label = { Text("E-post") },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
             )
 
             TextField(
                 value = password,
-                onValueChange = { viewModel.password = it },
+                onValueChange = {
+                    viewModel.password = it
+                    viewModel.authStateMessage = null
+                },
                 label = { Text("Passord") },
                 trailingIcon = {
                     IconButton(onClick = { viewModel.visiblePassword = !visiblePassword }) {
@@ -92,10 +91,15 @@ fun RegisterScreen(
 
             TextField(
                 value = confirmPassword,
-                onValueChange = { viewModel.confirmPassword = it },
+                onValueChange = {
+                    viewModel.confirmPassword = it
+                    viewModel.authStateMessage = null
+                },
                 label = { Text("Gjenta passord") },
                 trailingIcon = {
-                    IconButton(onClick = { viewModel.visibleConfirmPassword = !visibleConfirmPassword }) {
+                    IconButton(onClick = {
+                        viewModel.visibleConfirmPassword = !visibleConfirmPassword
+                    }) {
                         Icon(
                             imageVector = if (visibleConfirmPassword) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                             contentDescription = "Toggle password visibility"
@@ -109,6 +113,10 @@ fun RegisterScreen(
                     viewModel.signUp(email, password)
                 })
             )
+
+            if (viewModel.authStateMessage != null) {
+                Text(viewModel.authStateMessage!!)
+            }
 
             Button(
                 onClick = {

@@ -9,10 +9,12 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.exception.AuthRestException
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.auth.user.UserInfo
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
+import io.github.jan.supabase.auth.exception.AuthErrorCode
 
 @HiltViewModel
 class AuthenticationViewModel @Inject constructor(
@@ -24,27 +26,51 @@ class AuthenticationViewModel @Inject constructor(
     var visiblePassword by mutableStateOf(false)
     var visibleConfirmPassword by mutableStateOf(false)
 
+    var authStateMessage : String? by mutableStateOf(null)
+
     fun login(email: String, password: String) {
         Log.d("Login debug", "Login with e-mail ($email)")
-        try {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            try {
                 supabase.auth.signInWith(Email) {
                     this.email = email
                     this.password = password
                 }
+            } catch (e: AuthRestException) {
+                when (e.errorCode) {
+                    AuthErrorCode.InvalidCredentials -> {
+                        Log.e(
+                            "LoginError",
+                            "Invalid credentials",
+                            e
+                        )
+                        authStateMessage = "Ugyldig innlogging"
+                    }
+                    else -> {
+                        Log.e(
+                            "LoginError",
+                            "Error during supabase login with email and password",
+                            e
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("LoginError", "Unknown error threw generic Exception", e)
             }
-        } catch (e: Exception) {
-            Log.e(
-                "LoginError",
-                "Error during supabase login with email and password",
-                e
-            )
         }
     }
 
     fun logout() {
         viewModelScope.launch {
+            try {
             supabase.auth.signOut()
+            } catch (e: Exception) {
+                Log.e(
+                    "LogoutError",
+                    "Error during supabase logout",
+                    e
+                )
+            }
         }
     }
 
@@ -55,17 +81,42 @@ class AuthenticationViewModel @Inject constructor(
                     this.email = email
                     this.password = password
                 }
+            } catch (e: AuthRestException) {
+                Log.e("SignUp Error", "Code: ${e.errorCode}, Message: ${e.message}", e)
+                when (e.errorCode) {
+                    AuthErrorCode.EmailExists -> {
+                        authStateMessage = "E-post finnes allerede"
+                        Log.e(
+                            "SignUp Error",
+                            "Error signing up. E-mail exists",
+                            e
+                        )
+                    }
+                    AuthErrorCode.UserAlreadyExists -> {
+                        authStateMessage = "Bruker finnes allerede"
+                        Log.e(
+                            "SignUp Error",
+                            "Error signing up. User already exists",
+                            e
+                        )
+                    }
+                    else -> {
+                        authStateMessage = "Det skjedde en feil"
+                        Log.e(
+                            "SignUp Error",
+                            "Unknown error signing up",
+                            e
+                        )
+                    }
+                }
             } catch (e: Exception) {
-                Log.e(
-                    "Sign up error",
-                    "Error while signing up $email",
-                    e
-                )
+                authStateMessage = "Det skjedde en feil"
+                Log.e("LoginError", "Unknown error threw generic Exception", e)
             }
         }
     }
 
-    fun getUserOrNull() : UserInfo? {
+    fun getUserOrNull(): UserInfo? {
         return supabase.auth.currentUserOrNull()
     }
 }

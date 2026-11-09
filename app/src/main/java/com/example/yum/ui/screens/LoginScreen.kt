@@ -57,14 +57,20 @@ fun LoginScreen(
 
             TextField(
                 value = email,
-                onValueChange = { viewModel.email = it },
+                onValueChange = {
+                    viewModel.email = it
+                    viewModel.authStateMessage = null
+                },
                 label = { Text("E-post") },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
             )
 
             TextField(
                 value = password,
-                onValueChange = { viewModel.password = it },
+                onValueChange = {
+                    viewModel.password = it
+                    viewModel.authStateMessage = null
+                },
                 label = { Text("Passord") },
                 trailingIcon = {
                     IconButton(onClick = { viewModel.visiblePassword = !visiblePassword }) {
@@ -88,6 +94,10 @@ fun LoginScreen(
                     }
                 )
             )
+
+            if (viewModel.authStateMessage != null) {
+                Text(viewModel.authStateMessage!!)
+            }
 
             Button(
                 onClick = {
