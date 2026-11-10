@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.yum.model.DraftRecipeIngredient
-import com.example.yum.model.RecipeIngredient
+import com.example.yum.model.DraftRecipeStep
 import com.example.yum.model.RecipeStep
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -21,7 +21,11 @@ class CreateRecipeScreenViewModel @Inject constructor() : ViewModel() {
     val ingredients = mutableStateListOf<DraftRecipeIngredient>()
     var ingredientInput by mutableStateOf(DraftRecipeIngredient())
         private set
-    val steps = mutableStateListOf<RecipeStep>()
+    val steps = mutableStateListOf<DraftRecipeStep>()
+    var stepInput by mutableStateOf(DraftRecipeStep())
+
+    var showAddIngredient by mutableStateOf(false)
+    var showNewStepField by mutableStateOf(false)
 
     fun updateIngredientInput(input: DraftRecipeIngredient) {
         ingredientInput = input
@@ -32,6 +36,29 @@ class CreateRecipeScreenViewModel @Inject constructor() : ViewModel() {
 
         ingredients.add(ingredientInput)
         ingredientInput = DraftRecipeIngredient()
+    }
+
+    fun openAddIngredientPanel() {
+        showAddIngredient = true
+    }
+
+    fun closeAddIngredientPanel() {
+        showAddIngredient = false
+    }
+
+    fun deleteIngredient(ingredient: DraftRecipeIngredient) {
+        ingredients.remove(ingredient)
+    }
+
+    fun addStep() {
+        if (stepInput.instruction.isBlank()) return
+
+        steps.add(stepInput)
+        stepInput = DraftRecipeStep()
+    }
+
+    fun updateStepInput(input: DraftRecipeStep) {
+        stepInput = input
     }
 
 

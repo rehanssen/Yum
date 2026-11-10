@@ -7,9 +7,7 @@ data class DraftRecipeIngredient(
     var quantity: String = "",
     var unit: String = "",
 
-    var sortOrder: Int = 0,
-
-    var notes: String? = null,
+    var notes: String = "",
 
     var groupNumber: Int = 0
 )
