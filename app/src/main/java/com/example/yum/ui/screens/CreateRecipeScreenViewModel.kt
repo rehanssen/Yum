@@ -26,6 +26,7 @@ class CreateRecipeScreenViewModel @Inject constructor() : ViewModel() {
 
     var showAddIngredient by mutableStateOf(false)
     var showNewStepField by mutableStateOf(false)
+    var showAddIngredientSidepanel by mutableStateOf(true)
 
     fun updateIngredientInput(input: DraftRecipeIngredient) {
         ingredientInput = input
@@ -59,6 +60,10 @@ class CreateRecipeScreenViewModel @Inject constructor() : ViewModel() {
 
     fun updateStepInput(input: DraftRecipeStep) {
         stepInput = input
+    }
+
+    fun deleteStep(step: DraftRecipeStep) {
+        steps.remove(step)
     }
 
 
