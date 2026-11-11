@@ -1,5 +1,6 @@
 package com.example.yum.ui.screens
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -64,6 +65,12 @@ class CreateRecipeScreenViewModel @Inject constructor() : ViewModel() {
 
     fun deleteStep(step: DraftRecipeStep) {
         steps.remove(step)
+    }
+
+    fun saveRecipe() {
+        Log.d("Save recipe", "Mocking saved recipe. Implement building recipe-objects" +
+                "and post to DB")
+        //TODO: Implement
     }
 
 
