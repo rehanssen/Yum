@@ -166,9 +166,12 @@ fun AppNavigation(
             }
 
             composable("create_recipe") {
-                CreateRecipeScreen(onSaveRecipe = {
-                    navController.popBackStack()
-                })
+                CreateRecipeScreen(
+                    onSaveRecipe = {
+                        navController.popBackStack()
+                    },
+                    viewModel = createRecipeViewModel
+                )
             }
 
             composable("profile") {

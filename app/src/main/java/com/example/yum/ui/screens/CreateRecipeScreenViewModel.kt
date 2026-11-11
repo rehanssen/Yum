@@ -6,14 +6,24 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.yum.data.RecipeRepository
+import com.example.yum.model.CreateRecipeParams
 import com.example.yum.model.DraftRecipeIngredient
 import com.example.yum.model.DraftRecipeStep
+import com.example.yum.model.IngredientInsert
+import com.example.yum.model.RecipeIngredient
+import com.example.yum.model.RecipeInsert
 import com.example.yum.model.RecipeStep
+import com.example.yum.model.StepInsert
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CreateRecipeScreenViewModel @Inject constructor() : ViewModel() {
+class CreateRecipeScreenViewModel @Inject constructor(
+    private val repository: RecipeRepository
+) : ViewModel() {
     var title by mutableStateOf("")
     var description by mutableStateOf("")
     var yieldQuantity: String by mutableStateOf("4.0")
@@ -68,12 +78,48 @@ class CreateRecipeScreenViewModel @Inject constructor() : ViewModel() {
     }
 
     fun saveRecipe() {
-        Log.d("Save recipe", "Mocking saved recipe. Implement building recipe-objects" +
-                "and post to DB")
-        //TODO: Implement
+        val recipeTitle = title
+        val recipeDescription = description
+        Log.d(
+            "Save recipe", "Saving recipe. title=$recipeTitle, desc=$recipeDescription"
+        )
+        viewModelScope.launch {
+            try {
+                repository.createRecipe(
+                    CreateRecipeParams(
+                        recipe = RecipeInsert(
+                            title = recipeTitle,
+                            description = recipeDescription,
+                            visibility = "private",
+                            yieldQuantity = 4.0,
+                            yieldUnit = "porsjoner"
+                        ),
+                        ingredients = ingredients.mapIndexed { index, ingredient ->
+                            IngredientInsert(
+                                name = ingredient.name,
+                                quantity = ingredient.quantity.toDoubleOrNull(),
+                                unit = ingredient.unit.ifBlank { null },
+                                sortOrder = index,
+                                notes = ingredient.notes.ifBlank { null }
+                            )
+                        },
+                        steps = steps.mapIndexed { index, step ->
+                            StepInsert(
+                                instruction = step.instruction,
+                                sortOrder = step.sortOrder
+                            )
+                        }
+                    )
+                )
+            } catch (e: Exception) {
+                Log.e(
+                    "CreateRecipe",
+                    "Error creating and uploading recipe to DB",
+                    e
+                )
+            }
+        }
     }
-
-
 
 
 //
@@ -90,7 +136,6 @@ class CreateRecipeScreenViewModel @Inject constructor() : ViewModel() {
 //    fun updateYieldQuantity(it: String) {
 //        yieldQuantity = it
 //    }
-
 
 
 //    val id: String? = null

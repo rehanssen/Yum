@@ -1,10 +1,13 @@
 package com.example.yum.data
 
 import android.util.Log
+import com.example.yum.model.CreateRecipeParams
 import com.example.yum.model.Recipe
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
+import io.github.jan.supabase.postgrest.rpc
 import javax.inject.Inject
 
 class RecipeRepository @Inject constructor(
@@ -32,5 +35,12 @@ class RecipeRepository @Inject constructor(
                     eq("id", id)
                 }
             }.decodeSingle<Recipe>()
+    }
+
+    suspend fun createRecipe(params: CreateRecipeParams) {
+        supabase.postgrest.rpc(
+            "create_recipe",
+            params
+        )
     }
 }
