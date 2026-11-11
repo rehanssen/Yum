@@ -83,15 +83,14 @@ fun CreateRecipeScreen(
     var yieldQuantity = viewModel.yieldQuantity
 
     val keyboardController = LocalSoftwareKeyboardController.current
-    val focusRequester = remember { FocusRequester() }
 
     BoxWithConstraints {
         val wideScreen = maxWidth >= 640.dp
 
         if (wideScreen) {
-            WideScreenCreateRecipe(viewModel, keyboardController, focusRequester)
+            WideScreenCreateRecipe(viewModel, keyboardController)
         } else {
-            SmallScreenCreateRecipe(viewModel, keyboardController, focusRequester)
+            SmallScreenCreateRecipe(viewModel, keyboardController)
         }
     }
 }
@@ -99,15 +98,8 @@ fun CreateRecipeScreen(
 @Composable
 fun WideScreenCreateRecipe(
     viewModel: CreateRecipeScreenViewModel,
-    keyboardController: SoftwareKeyboardController?,
-    focusRequester: FocusRequester
+    keyboardController: SoftwareKeyboardController?
 ) {
-    LaunchedEffect(viewModel.showNewStepField) {
-        if (viewModel.showNewStepField) {
-            focusRequester.requestFocus()
-            keyboardController?.show()
-        }
-    }
 
     Row(
         modifier = Modifier
@@ -152,6 +144,7 @@ fun WideScreenCreateRecipe(
         LazyColumn(
             modifier = Modifier
                 .weight(2f)
+                .imePadding()
         ) {
             item {
                 OutlinedTextField(
@@ -198,34 +191,7 @@ fun WideScreenCreateRecipe(
 
             item {
                 if (viewModel.showNewStepField) {
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .focusRequester(focusRequester),
-                        value = viewModel.stepInput.instruction,
-                        onValueChange = {
-                            viewModel.updateStepInput(
-                                viewModel.stepInput.copy(instruction = it)
-                            )
-                        },
-                        label = { Text("Instruksjon") },
-                        trailingIcon = {
-                            IconButton(
-                                onClick = {
-                                    viewModel.showNewStepField = false
-                                    viewModel.stepInput = DraftRecipeStep()
-                                }
-                            ) {
-                                Icon(Icons.Default.Close, contentDescription = "Avbryt")
-                            }
-                        },
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                        keyboardActions = KeyboardActions(onDone = {
-                            viewModel.addStep()
-                            viewModel.showNewStepField = false
-                            keyboardController?.hide()
-                        })
-                    )
+                    NewStepInputField(viewModel, keyboardController)
                 } else {
                     IconButton(
                         onClick = { viewModel.showNewStepField = true }
@@ -249,8 +215,7 @@ fun WideScreenCreateRecipe(
 @Composable
 fun SmallScreenCreateRecipe(
     viewModel: CreateRecipeScreenViewModel,
-    keyboardController: SoftwareKeyboardController?,
-    focusRequester: FocusRequester
+    keyboardController: SoftwareKeyboardController?
 ) {
     Box() {
         // Steps
@@ -284,6 +249,12 @@ fun NewIngredientOverlay(
     viewModel: CreateRecipeScreenViewModel,
     keyboardController: SoftwareKeyboardController?
 ) {
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
     ModalBottomSheet(
         onDismissRequest = { viewModel.showAddIngredient = false }
     ) {
@@ -308,7 +279,9 @@ fun NewIngredientOverlay(
                         )
                     },
                     label = { Text("Ingrediens") },
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .focusRequester(focusRequester),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
                 )
 
@@ -464,4 +437,45 @@ fun IngredientsSidePanel(
             }
         }
     }
+}
+
+@Composable
+fun NewStepInputField(
+    viewModel: CreateRecipeScreenViewModel,
+    keyboardController: SoftwareKeyboardController?
+) {
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
+    OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .focusRequester(focusRequester),
+        value = viewModel.stepInput.instruction,
+        onValueChange = {
+            viewModel.updateStepInput(
+                viewModel.stepInput.copy(instruction = it)
+            )
+        },
+        label = { Text("Instruksjon") },
+        trailingIcon = {
+            IconButton(
+                onClick = {
+                    viewModel.showNewStepField = false
+                    viewModel.stepInput = DraftRecipeStep()
+                }
+            ) {
+                Icon(Icons.Default.Close, contentDescription = "Avbryt")
+            }
+        },
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(onDone = {
+            viewModel.addStep()
+            viewModel.showNewStepField = false
+            keyboardController?.hide()
+        })
+    )
 }
