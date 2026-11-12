@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -59,21 +60,11 @@ fun HomeScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Home screen")
-                        Column {
-                            Text(user?.email ?: "Anon")
-                            Button(
-                                onClick = {
-                                    scope.launch {
-                                        supabase.auth.signOut()
-                                    }
-                                }
-                            ) {
-                                Text("Logg ut")
-                            }
-                        }
+                    Text("Home screen")
+                        Text(user?.email ?: "Anon")
                     }
                 }
             )
@@ -81,17 +72,19 @@ fun HomeScreen(
     ) { innerPadding ->
         Column(
             modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             when (loadingState) {
                 is RecipeLoadingState.Loading -> {
                     CircularProgressIndicator()
                 }
+
                 is RecipeLoadingState.Failed -> {
                     Text(loadingState.message)
                 }
+
                 is RecipeLoadingState.Loaded -> {
                     LazyColumn(
                         modifier = Modifier.padding(4.dp),
@@ -108,7 +101,7 @@ fun HomeScreen(
                                     onRecipeClick(recipe.id!!)
                                 }
                             ) {
-                            Text(recipe.title, modifier = Modifier.padding(2.dp))
+                                Text(recipe.title, modifier = Modifier.padding(2.dp))
                                 Text("  ${recipe.description}")
                             }
                         }

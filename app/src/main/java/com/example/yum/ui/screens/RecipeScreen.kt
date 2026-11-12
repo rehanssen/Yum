@@ -23,16 +23,20 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -45,9 +49,11 @@ import com.example.yum.model.RecipeIngredient
 import com.example.yum.model.RecipeStep
 import com.example.yum.ui.RecipeLoadingState
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeScreen(
     recipeId: String,
+    onNavigateBack: () -> Unit,
     viewModel: RecipeScreenViewModel = hiltViewModel()
 ) {
     val recipeLoadingState = viewModel.recipe
@@ -57,34 +63,57 @@ fun RecipeScreen(
         viewModel.loadRecipe(recipeId)
     }
 
-    when (recipeLoadingState) {
-        is RecipeLoadingState.Loading -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                CircularProgressIndicator()
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {},
+                navigationIcon = {
+                    IconButton(onClick = { onNavigateBack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Tilbake"
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            )
+        }
+    ) { innerPadding ->
+        when (recipeLoadingState) {
+            is RecipeLoadingState.Loading -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator()
+                }
             }
-        }
 
-        is RecipeLoadingState.Failed -> {
-            Text(recipeLoadingState.message)
-        }
+            is RecipeLoadingState.Failed -> {
+                Text(recipeLoadingState.message, modifier = Modifier.padding(innerPadding))
+            }
 
-        is RecipeLoadingState.Loaded -> {
-            BoxWithConstraints {
-                val wideScreen = maxWidth >= 640.dp
+            is RecipeLoadingState.Loaded -> {
+                BoxWithConstraints(
+                    modifier = Modifier.padding(innerPadding)
+                ) {
+                    val wideScreen = maxWidth >= 640.dp
 
-                if (wideScreen) {
-                    RecipeWideScreenDisplay(recipeLoadingState.data)
-                } else {
-                    RecipeSmallScreenDisplay(
-                        recipe = recipeLoadingState.data,
-                        ingredientsVisible = ingredientsVisible,
-                        onToggleIngredients = { viewModel.toggleIngredientPanel() }
-                    )
+                    if (wideScreen) {
+                        RecipeWideScreenDisplay(recipeLoadingState.data)
+                    } else {
+                        RecipeSmallScreenDisplay(
+                            recipe = recipeLoadingState.data,
+                            ingredientsVisible = ingredientsVisible,
+                            onToggleIngredients = { viewModel.toggleIngredientPanel() }
+                        )
+                    }
                 }
             }
         }
@@ -143,11 +172,11 @@ fun RecipeSmallScreenDisplay(
             }
         }
 
-            IngredientsPanel(
-                ingredients = recipe.recipeIngredients,
-                ingredientsVisible = ingredientsVisible,
-                onToggleVisibility = onToggleIngredients
-            )
+        IngredientsPanel(
+            ingredients = recipe.recipeIngredients,
+            ingredientsVisible = ingredientsVisible,
+            onToggleVisibility = onToggleIngredients
+        )
     }
 }
 
@@ -180,12 +209,15 @@ fun IngredientsPanel(
         ) {
             if (visible) {
                 LazyColumn(
-                    modifier = Modifier.weight(1f).padding(8.dp)
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(8.dp)
                 ) {
-                    item { Text(
-                        text = "Ingredienser",
-                        style = MaterialTheme.typography.titleLarge
-                    )
+                    item {
+                        Text(
+                            text = "Ingredienser",
+                            style = MaterialTheme.typography.titleLarge
+                        )
                     }
 
                     groupedIngredients.forEach { (group, groupIngredients) ->

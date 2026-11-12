@@ -5,8 +5,6 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -25,10 +23,12 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -38,7 +38,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -46,7 +49,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -54,46 +56,52 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.yum.model.DraftRecipeIngredient
 import com.example.yum.model.DraftRecipeStep
-import com.example.yum.model.Recipe
-import com.example.yum.model.RecipeIngredient
-import com.example.yum.model.RecipeStep
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateRecipeScreen(
-    onSaveRecipe: () -> Unit,
+    onNavigateBack: () -> Unit,
     viewModel: CreateRecipeScreenViewModel = hiltViewModel()
 ) {
-    val id: String? = null
-
-    val ownerId: String
-
-    val visibility: String = "private"
-
-
-    val yieldUnit: String = "porsjoner"
-
-    val createdAt: String? = null
-
-    val updatedAt: String? = null
-
-    val recipe = Recipe
-    val ingredients = mutableListOf<RecipeIngredient>()
-    val steps = mutableListOf<RecipeStep>()
-
-
-    var title = viewModel.title
-    var description = viewModel.description
-    var yieldQuantity = viewModel.yieldQuantity
-
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    BoxWithConstraints {
-        val wideScreen = maxWidth >= 640.dp
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ),
+                title = { Text("Ny oppskrift") },
+                navigationIcon = {
+                    IconButton(onClick = { onNavigateBack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Tilbake"
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        viewModel.saveRecipe()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Save,
+                            contentDescription = "Lagre"
+                        )
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
+        BoxWithConstraints(modifier = Modifier.padding(innerPadding)) {
+            val wideScreen = maxWidth >= 640.dp
 
-        if (wideScreen) {
-            WideScreenCreateRecipe(viewModel, keyboardController)
-        } else {
-            SmallScreenCreateRecipe(viewModel, keyboardController)
+            if (wideScreen) {
+                WideScreenCreateRecipe(viewModel, keyboardController)
+            } else {
+                SmallScreenCreateRecipe(viewModel, keyboardController)
+            }
         }
     }
 }
@@ -103,7 +111,6 @@ fun WideScreenCreateRecipe(
     viewModel: CreateRecipeScreenViewModel,
     keyboardController: SoftwareKeyboardController?
 ) {
-
     Row(
         modifier = Modifier
             .fillMaxSize()
@@ -474,8 +481,8 @@ fun IngredientsSidePanel(
                 modifier = Modifier.align(Alignment.CenterVertically)
             ) {
                 Icon(
-                    imageVector = if (visible) Icons.Default.KeyboardArrowLeft
-                    else Icons.Default.KeyboardArrowRight,
+                    imageVector = if (visible) Icons.AutoMirrored.Filled.KeyboardArrowLeft
+                    else Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "Vis/skjul ingredienser"
                 )
             }

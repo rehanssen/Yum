@@ -3,6 +3,8 @@ package com.example.yum.ui
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -44,60 +46,12 @@ fun AppNavigation(
     val navController = rememberNavController()
     val currentRoute = navController.currentBackStackEntryAsState()
         .value?.destination?.route
-    val createRecipeViewModel: CreateRecipeScreenViewModel = hiltViewModel()
 
     Scaffold(
-        topBar = {
-            when (currentRoute) {
-                "recipe/{recipeId}" -> {
-                    TopAppBar(
-                        title = {},
-                        navigationIcon = {
-                            IconButton(onClick = { navController.popBackStack() }) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = "Tilbake"
-                                )
-                            }
-                        },
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.surface,
-                            navigationIconContentColor = MaterialTheme.colorScheme.onSurface
-                        )
-                    )
-
-                }
-
-                "create_recipe" -> {
-                    TopAppBar(
-                        title = {},
-                        navigationIcon = {
-                            IconButton(onClick = { navController.popBackStack() }) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = "Tilbake"
-                                )
-                            }
-                        },
-                        actions = {
-                            IconButton(onClick = {
-                                createRecipeViewModel.saveRecipe()
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Default.Save,
-                                    contentDescription = "Lagre"
-                                )
-                            }
-                        }
-                    )
-                }
-            }
-        },
-
         bottomBar = {
             NavigationBar(
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
             ) {
                 NavigationBarItem(
                     selected = currentRoute == "create_recipe",
@@ -136,46 +90,53 @@ fun AppNavigation(
                 )
             }
         }
-    ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = "home",
+    ) { outerPadding ->
+        Box(
             modifier = Modifier
-                .padding(innerPadding),
-            enterTransition = { fadeIn() },
-            exitTransition = { fadeOut() }
+                .fillMaxSize()
+                .padding(outerPadding)
         ) {
-            composable("home") {
-                HomeScreen(
-                    onRecipeClick = { recipeId ->
-                        navController.navigate("recipe/$recipeId")
-                    },
-                    onCreateRecipe = {
-                        navController.navigate("create_recipe")
-                    })
-            }
-
-            composable("recipe/{recipeId}") { backStackEntry ->
-                val recipeId = backStackEntry.arguments?.getString("recipeId")
-
-                if (recipeId == null) {
-                    navController.popBackStack()
-                } else {
-                    RecipeScreen(recipeId = recipeId)
+            NavHost(
+                navController = navController,
+                startDestination = "home",
+                enterTransition = { fadeIn() },
+                exitTransition = { fadeOut() }
+            ) {
+                composable("home") {
+                    HomeScreen(
+                        onRecipeClick = { recipeId ->
+                            navController.navigate("recipe/$recipeId")
+                        },
+                        onCreateRecipe = {
+                            navController.navigate("create_recipe")
+                        })
                 }
-            }
 
-            composable("create_recipe") {
-                CreateRecipeScreen(
-                    onSaveRecipe = {
+                composable("recipe/{recipeId}") { backStackEntry ->
+                    val recipeId = backStackEntry.arguments?.getString("recipeId")
+
+                    if (recipeId == null) {
                         navController.popBackStack()
-                    },
-                    viewModel = createRecipeViewModel
-                )
-            }
+                    } else {
+                        RecipeScreen(
+                            recipeId = recipeId,
+                            onNavigateBack = {
+                                navController.popBackStack()
+                            })
+                    }
+                }
 
-            composable("profile") {
-                ProfileScreen()
+                composable("create_recipe") {
+                    CreateRecipeScreen(
+                        onNavigateBack = {
+                            navController.popBackStack()
+                        }
+                    )
+                }
+
+                composable("profile") {
+                    ProfileScreen()
+                }
             }
         }
     }
