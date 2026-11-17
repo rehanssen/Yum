@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -66,7 +67,15 @@ fun RecipeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {},
+                title = {
+                    Text(
+                        when (recipeLoadingState) {
+                            is RecipeLoadingState.Loaded -> recipeLoadingState.data.title
+                            is RecipeLoadingState.Loading -> "Laster..."
+                            is RecipeLoadingState.Failed -> "Feil"
+                        }
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { onNavigateBack() }) {
                         Icon(
@@ -143,6 +152,14 @@ fun RecipeWideScreenDisplay(
         LazyColumn(
             modifier = Modifier.weight(2f)
         ) {
+            item { Text(recipe.description ?: "") }
+            item {
+                HorizontalDivider(
+                    modifier = Modifier.padding(4.dp),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    thickness = 2.dp,
+                )
+            }
             item { Text("Fremgangsmåte") }
             itemsIndexed(recipe.recipeSteps.sortedBy { it.sortOrder }) { index, step ->
                 Text("${index + 1}: ${step.instruction ?: "Gjør hva som helst"}")
@@ -166,6 +183,14 @@ fun RecipeSmallScreenDisplay(
                 .background(MaterialTheme.colorScheme.background)
                 .padding(start = 48.dp)
         ) {
+            item { Text(recipe.description ?: "") }
+            item {
+                HorizontalDivider(
+                    modifier = Modifier.padding(4.dp),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    thickness = 2.dp,
+                )
+            }
             item { Text("Fremgangsmåte") }
             itemsIndexed(recipe.recipeSteps.sortedBy { it.sortOrder }) { index, step ->
                 Text("${index + 1}: ${step.instruction ?: "Gjør hva som helst"}")
