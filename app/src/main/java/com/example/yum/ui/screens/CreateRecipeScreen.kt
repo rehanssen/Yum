@@ -1,5 +1,6 @@
 package com.example.yum.ui.screens
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -49,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -237,7 +239,14 @@ fun SmallScreenCreateRecipe(
         ) {
             item {
                 OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onFocusChanged { focusState ->
+                            Log.d("Focus", "Focused: ${focusState.isFocused}")
+                            if (focusState.isFocused) {
+                                viewModel.closeAddIngredientSidepanel()
+                            }
+                        },
                     value = viewModel.title,
                     onValueChange = { viewModel.title = it },
                     label = { Text("Tittel") },
@@ -247,7 +256,14 @@ fun SmallScreenCreateRecipe(
 
             item {
                 OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onFocusChanged { focusState ->
+                            Log.d("Focus", "Focused: ${focusState.isFocused}")
+                            if (focusState.isFocused) {
+                                viewModel.closeAddIngredientSidepanel()
+                            }
+                        },
                     value = viewModel.description,
                     onValueChange = { viewModel.description = it },
                     label = { Text("Beskrivelse") },
@@ -286,7 +302,7 @@ fun SmallScreenCreateRecipe(
             viewModel = viewModel,
             keyboardController = keyboardController,
             ingredients = viewModel.ingredients,
-            ingredientsVisible = viewModel.showAddIngredientSidepanel,
+//            ingredientsVisible = viewModel.showAddIngredientSidepanel,
             onToggleVisibility = {
                 viewModel.showAddIngredientSidepanel = !viewModel.showAddIngredientSidepanel
             }
@@ -307,7 +323,7 @@ fun NewIngredientOverlay(
     }
 
     ModalBottomSheet(
-        onDismissRequest = { viewModel.showAddIngredient = false }
+        onDismissRequest = { viewModel.closeAddIngredientSidepanel() }
     ) {
         Column(
             modifier = Modifier
@@ -395,13 +411,14 @@ fun IngredientsSidePanel(
     viewModel: CreateRecipeScreenViewModel,
     keyboardController: SoftwareKeyboardController?,
     ingredients: List<DraftRecipeIngredient>,
-    ingredientsVisible: Boolean,
+//    ingredientsVisible: Boolean,
     onToggleVisibility: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val groupedIngredients = ingredients.groupBy { it.groupNumber }.toSortedMap()
     AnimatedContent(
-        targetState = ingredientsVisible,
+//        targetState = ingredientsVisible,
+        targetState = viewModel.showAddIngredientSidepanel,
         transitionSpec = {
             if (targetState) {
                 slideInHorizontally { -it } togetherWith
@@ -465,7 +482,7 @@ fun IngredientsSidePanel(
                                 keyboardController
                             )
                         } else {
-                            Button(onClick = { viewModel.showAddIngredient = true }) {
+                            Button(onClick = { viewModel.openAddIngredientSidepanel() }) {
                                 Icon(
                                     imageVector = Icons.Default.Add,
                                     contentDescription = "Legg til ingrediens"
