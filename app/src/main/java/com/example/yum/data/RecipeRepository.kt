@@ -13,12 +13,17 @@ import javax.inject.Inject
 class RecipeRepository @Inject constructor(
     private val supabase: SupabaseClient
 ) {
+    private var recipeCache: List<Recipe>? = null
     suspend fun getRecipes() : List<Recipe> {
+        recipeCache?.let { return it }
+
         Log.i("Data fetching:", "Fetching recipes")
-        return supabase
+        val recipes = supabase
             .from("recipes")
             .select()
             .decodeList<Recipe>()
+        recipeCache = recipes
+        return recipes
     }
 
     suspend fun getRecipe(id: String) : Recipe {
@@ -42,5 +47,7 @@ class RecipeRepository @Inject constructor(
             "create_recipe",
             params
         )
+
+        recipeCache = null
     }
 }
