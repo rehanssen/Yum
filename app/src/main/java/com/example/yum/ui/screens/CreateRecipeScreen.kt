@@ -332,7 +332,7 @@ fun NewIngredientOverlay(
     }
 
     ModalBottomSheet(
-        onDismissRequest = { viewModel.closeAddIngredientSidepanel() }
+        onDismissRequest = { viewModel.toggleShowAddIngredient() }
     ) {
         Column(
             modifier = Modifier
@@ -420,7 +420,6 @@ fun IngredientsSidePanel(
     viewModel: CreateRecipeScreenViewModel,
     keyboardController: SoftwareKeyboardController?,
     ingredients: List<DraftRecipeIngredient>,
-//    ingredientsVisible: Boolean,
     onToggleVisibility: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -491,7 +490,7 @@ fun IngredientsSidePanel(
                                 keyboardController
                             )
                         } else {
-                            Button(onClick = { viewModel.openAddIngredientSidepanel() }) {
+                            Button(onClick = { viewModel.toggleShowAddIngredient() }) {
                                 Icon(
                                     imageVector = Icons.Default.Add,
                                     contentDescription = "Legg til ingrediens"

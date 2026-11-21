@@ -51,6 +51,9 @@ class CreateRecipeScreenViewModel @Inject constructor(
         ingredientInput = DraftRecipeIngredient()
     }
 
+    fun toggleShowAddIngredient() {
+        showAddIngredient = !showAddIngredient
+    }
     fun openAddIngredientPanel() {
         showAddIngredient = true
     }
