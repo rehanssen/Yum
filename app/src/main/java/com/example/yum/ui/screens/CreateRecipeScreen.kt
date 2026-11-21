@@ -6,11 +6,13 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -51,6 +53,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -68,6 +71,7 @@ fun CreateRecipeScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -96,7 +100,10 @@ fun CreateRecipeScreen(
             )
         }
     ) { innerPadding ->
-        BoxWithConstraints(modifier = Modifier.padding(innerPadding)) {
+        BoxWithConstraints(modifier = Modifier
+            .padding(innerPadding)
+            .fillMaxSize()
+        ) {
             val wideScreen = maxWidth >= 640.dp
 
             if (wideScreen) {
@@ -229,7 +236,9 @@ fun SmallScreenCreateRecipe(
     viewModel: CreateRecipeScreenViewModel,
     keyboardController: SoftwareKeyboardController?
 ) {
-    Box() {
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
         // Steps
         LazyColumn(
             modifier = Modifier
@@ -417,7 +426,7 @@ fun IngredientsSidePanel(
 ) {
     val groupedIngredients = ingredients.groupBy { it.groupNumber }.toSortedMap()
     AnimatedContent(
-//        targetState = ingredientsVisible,
+        modifier = Modifier.fillMaxHeight(),
         targetState = viewModel.showAddIngredientSidepanel,
         transitionSpec = {
             if (targetState) {
