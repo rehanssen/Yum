@@ -16,7 +16,7 @@ Data layer:
 
 Resources:
   - changed-files:
-      - any-glob-to-any-file: 'app/src/main/res'
+      - any-glob-to-any-file: 'app/src/main/res/**'
 
 Android tests:
   - changed-files:
