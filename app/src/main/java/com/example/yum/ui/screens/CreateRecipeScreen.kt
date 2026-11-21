@@ -6,11 +6,15 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -51,6 +55,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -68,6 +74,7 @@ fun CreateRecipeScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -96,7 +103,11 @@ fun CreateRecipeScreen(
             )
         }
     ) { innerPadding ->
-        BoxWithConstraints(modifier = Modifier.padding(innerPadding)) {
+        BoxWithConstraints(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
             val wideScreen = maxWidth >= 640.dp
 
             if (wideScreen) {
@@ -229,7 +240,9 @@ fun SmallScreenCreateRecipe(
     viewModel: CreateRecipeScreenViewModel,
     keyboardController: SoftwareKeyboardController?
 ) {
-    Box() {
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
         // Steps
         LazyColumn(
             modifier = Modifier
@@ -323,7 +336,7 @@ fun NewIngredientOverlay(
     }
 
     ModalBottomSheet(
-        onDismissRequest = { viewModel.closeAddIngredientSidepanel() }
+        onDismissRequest = { viewModel.toggleShowAddIngredient() }
     ) {
         Column(
             modifier = Modifier
@@ -411,13 +424,27 @@ fun IngredientsSidePanel(
     viewModel: CreateRecipeScreenViewModel,
     keyboardController: SoftwareKeyboardController?,
     ingredients: List<DraftRecipeIngredient>,
-//    ingredientsVisible: Boolean,
     onToggleVisibility: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val groupedIngredients = ingredients.groupBy { it.groupNumber }.toSortedMap()
+    var totalDrag = 0f
     AnimatedContent(
-//        targetState = ingredientsVisible,
+        modifier = Modifier
+            .fillMaxHeight()
+            .pointerInput(Unit) {
+                detectHorizontalDragGestures(
+                    onDragStart = { totalDrag = 0f },
+                    onHorizontalDrag = { _, dragAmount ->
+                        totalDrag += dragAmount
+                    },
+                    onDragEnd = {
+                        if (totalDrag < -100f) {
+                            viewModel.toggleShowAddIngredientsSidepanel()
+                        }
+                    }
+                )
+            },
         targetState = viewModel.showAddIngredientSidepanel,
         transitionSpec = {
             if (targetState) {
@@ -482,7 +509,7 @@ fun IngredientsSidePanel(
                                 keyboardController
                             )
                         } else {
-                            Button(onClick = { viewModel.openAddIngredientSidepanel() }) {
+                            Button(onClick = { viewModel.toggleShowAddIngredient() }) {
                                 Icon(
                                     imageVector = Icons.Default.Add,
                                     contentDescription = "Legg til ingrediens"
