@@ -1,2 +1,2 @@
 # Yum
-Applikasjon for lagring og deling av oppskrifter
+Androidapplikasjon for lagring og deling av oppskrifter.
