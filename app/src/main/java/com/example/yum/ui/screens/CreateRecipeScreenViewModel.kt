@@ -62,6 +62,10 @@ class CreateRecipeScreenViewModel @Inject constructor(
         showAddIngredient = false
     }
 
+    fun toggleShowAddIngredientsSidepanel() {
+        showAddIngredientSidepanel = !showAddIngredientSidepanel
+    }
+
     fun openAddIngredientSidepanel() {
         showAddIngredientSidepanel = true
     }

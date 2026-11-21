@@ -7,6 +7,8 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -54,6 +56,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -100,9 +103,10 @@ fun CreateRecipeScreen(
             )
         }
     ) { innerPadding ->
-        BoxWithConstraints(modifier = Modifier
-            .padding(innerPadding)
-            .fillMaxSize()
+        BoxWithConstraints(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
         ) {
             val wideScreen = maxWidth >= 640.dp
 
@@ -424,8 +428,23 @@ fun IngredientsSidePanel(
     modifier: Modifier = Modifier
 ) {
     val groupedIngredients = ingredients.groupBy { it.groupNumber }.toSortedMap()
+    var totalDrag = 0f
     AnimatedContent(
-        modifier = Modifier.fillMaxHeight(),
+        modifier = Modifier
+            .fillMaxHeight()
+            .pointerInput(Unit) {
+                detectHorizontalDragGestures(
+                    onDragStart = { totalDrag = 0f },
+                    onHorizontalDrag = { _, dragAmount ->
+                        totalDrag += dragAmount
+                    },
+                    onDragEnd = {
+                        if (totalDrag < -100f) {
+                            viewModel.toggleShowAddIngredientsSidepanel()
+                        }
+                    }
+                )
+            },
         targetState = viewModel.showAddIngredientSidepanel,
         transitionSpec = {
             if (targetState) {
