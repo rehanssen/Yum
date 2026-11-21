@@ -1,0 +1,35 @@
+App:
+  - changed-files:
+      - any-glob-to-any-file: 'app/src/main/java/com/example/yum/**'
+
+UI:
+  - changed-files:
+      - any-glob-to-any-file: 'app/src/main/java/com/example/yum/ui/**'
+
+Model:
+  - changed-files:
+      - any-glob-to-any-file: 'app/src/main/java/com/example/yum/model/**'
+
+Data layer:
+  - changed-files:
+      - any-glob-to-any-file: 'app/src/main/java/com/example/yum/data/**'
+
+Resources:
+  - changed-files:
+      - any-glob-to-any-file: 'app/src/main/res'
+
+Android tests:
+  - changed-files:
+      - any-glob-to-any-file: app/src/androidTest/**'
+
+Unit tests:
+  - changed-files:
+      - any-glob-to-any-file: app/src/test/**'
+
+Documentation:
+  - changed-files:
+      - any-glob-to-any-file: '**/*.md'
+
+GitHub Actions:
+  - changed-files:
+      - any-glob-to-any-file: '.github/workflows/**'
