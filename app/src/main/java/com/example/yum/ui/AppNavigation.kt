@@ -124,6 +124,7 @@ fun AppNavigation(
                     } else {
                         RecipeScreen(
                             recipeId = recipeId,
+                            supabase = supabase,
                             onNavigateBack = {
                                 navController.popBackStack()
                             })
