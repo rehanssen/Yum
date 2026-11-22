@@ -68,9 +68,14 @@ import com.example.yum.model.DraftRecipeStep
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateRecipeScreen(
+    recipeId: String? = null,
     onNavigateBack: () -> Unit,
     viewModel: CreateRecipeScreenViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.init(recipeId)
+    }
+
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Scaffold(
@@ -81,7 +86,7 @@ fun CreateRecipeScreen(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 ),
-                title = { Text("Ny oppskrift") },
+                title = { Text(if (recipeId == null) "Ny oppskrift" else "Rediger oppskrift") },
                 navigationIcon = {
                     IconButton(onClick = { onNavigateBack() }) {
                         Icon(

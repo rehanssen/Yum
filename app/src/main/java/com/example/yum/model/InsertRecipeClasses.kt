@@ -23,7 +23,8 @@ data class RecipeInsert(
     @SerialName("yield_quantity")
     val yieldQuantity: Double,
     @SerialName("yield_unit")
-    val yieldUnit: String
+    val yieldUnit: String,
+    val active: Boolean
 )
 
 @Serializable

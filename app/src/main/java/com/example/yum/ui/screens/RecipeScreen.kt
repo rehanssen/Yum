@@ -55,6 +55,7 @@ fun RecipeScreen(
     recipeId: String,
     supabase: SupabaseClient,
     onNavigateBack: () -> Unit,
+    onEditRecipe: (String) -> Unit,
     viewModel: RecipeScreenViewModel = hiltViewModel()
 ) {
     val recipeLoadingState = viewModel.recipe
@@ -94,7 +95,10 @@ fun RecipeScreen(
                         recipeLoadingState.data.ownerId == supabase.auth.currentUserOrNull()?.id
                     ) {
                         IconButton(
-                            onClick = { Log.d("TODO", "TODO: implementer redigering") }
+                            onClick = {
+                                Log.i("Edit recipe", "Rediger-knapp trykket")
+                                onEditRecipe(recipeId)
+                            }
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Edit,
