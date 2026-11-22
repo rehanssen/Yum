@@ -8,12 +8,14 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,8 +45,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.motionEventSpy
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.yum.model.Recipe
 import com.example.yum.model.RecipeIngredient
 import com.example.yum.model.RecipeStep
@@ -65,6 +69,7 @@ fun RecipeScreen(
     }
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             TopAppBar(
                 title = {
@@ -118,6 +123,7 @@ fun RecipeScreen(
                         RecipeWideScreenDisplay(recipeLoadingState.data)
                     } else {
                         RecipeSmallScreenDisplay(
+                            viewModel = viewModel,
                             recipe = recipeLoadingState.data,
                             ingredientsVisible = ingredientsVisible,
                             onToggleIngredients = { viewModel.toggleIngredientPanel() }
@@ -170,6 +176,7 @@ fun RecipeWideScreenDisplay(
 
 @Composable
 fun RecipeSmallScreenDisplay(
+    viewModel: RecipeScreenViewModel,
     recipe: Recipe,
     ingredientsVisible: Boolean,
     onToggleIngredients: () -> Unit,
@@ -198,6 +205,7 @@ fun RecipeSmallScreenDisplay(
         }
 
         IngredientsPanel(
+            viewModel = viewModel,
             ingredients = recipe.recipeIngredients,
             ingredientsVisible = ingredientsVisible,
             onToggleVisibility = onToggleIngredients
@@ -208,12 +216,28 @@ fun RecipeSmallScreenDisplay(
 @Composable
 fun IngredientsPanel(
     modifier: Modifier = Modifier,
+    viewModel: RecipeScreenViewModel,
     ingredients: List<RecipeIngredient>,
     ingredientsVisible: Boolean,
     onToggleVisibility: () -> Unit
 ) {
     val groupedIngredients = ingredients.groupBy { it.groupNumber }.toSortedMap()
+    var totalDrag = 0f
     AnimatedContent(
+        modifier = Modifier
+            .pointerInput(Unit) {
+                detectHorizontalDragGestures(
+                    onDragStart = { totalDrag = 0f },
+                    onHorizontalDrag = { _, dragAmount ->
+                        totalDrag += dragAmount
+                    },
+                    onDragEnd = {
+                        if (totalDrag < -100f) {
+                            viewModel.toggleIngredientPanel()
+                        }
+                    }
+                )
+            },
         targetState = ingredientsVisible,
         transitionSpec = {
             if (targetState) {
