@@ -29,5 +29,6 @@ data class Recipe(
     val createdAt: String? = null,
 
     @SerialName("updated_at")
-    val updatedAt: String? = null
+    val updatedAt: String? = null,
+    val active: Boolean
 )
