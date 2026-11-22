@@ -8,6 +8,7 @@ import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.postgrest.rpc
+import java.util.Locale.filter
 import javax.inject.Inject
 
 class RecipeRepository @Inject constructor(
@@ -20,7 +21,11 @@ class RecipeRepository @Inject constructor(
         Log.i("Data fetching:", "Fetching recipes")
         val recipes = supabase
             .from("recipes")
-            .select()
+            .select() {
+                filter {
+                    eq("active", true)
+                }
+            }
             .decodeList<Recipe>()
         recipeCache = recipes
         return recipes

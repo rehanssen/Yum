@@ -124,14 +124,30 @@ fun AppNavigation(
                     } else {
                         RecipeScreen(
                             recipeId = recipeId,
+                            supabase = supabase,
                             onNavigateBack = {
                                 navController.popBackStack()
-                            })
+                            },
+                            onEditRecipe = { id ->
+                                navController.navigate("create_recipe/$id")
+                            }
+                        )
                     }
                 }
 
                 composable("create_recipe") {
                     CreateRecipeScreen(
+                        onNavigateBack = {
+                            navController.popBackStack()
+                        }
+                    )
+                }
+
+                composable("create_recipe/{id}") { backStackEntry ->
+                    val id = backStackEntry.arguments?.getString("id")
+
+                    CreateRecipeScreen(
+                        recipeId = id,
                         onNavigateBack = {
                             navController.popBackStack()
                         }

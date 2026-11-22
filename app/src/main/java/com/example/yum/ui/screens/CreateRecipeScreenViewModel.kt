@@ -25,10 +25,13 @@ import javax.inject.Inject
 class CreateRecipeScreenViewModel @Inject constructor(
     private val repository: RecipeRepository
 ) : ViewModel() {
+    private var recipeId: String? = null
     var title by mutableStateOf("")
     var description by mutableStateOf("")
+    var visibility by mutableStateOf("")
     var yieldQuantity: String by mutableStateOf("4.0")
     var yieldUnit by mutableStateOf("porsjoner")
+    var active by mutableStateOf(true)
 
     val ingredients = mutableStateListOf<DraftRecipeIngredient>()
     var ingredientInput by mutableStateOf(DraftRecipeIngredient())
@@ -39,6 +42,13 @@ class CreateRecipeScreenViewModel @Inject constructor(
     var showAddIngredient by mutableStateOf(false)
     var showNewStepField by mutableStateOf(false)
     var showAddIngredientSidepanel by mutableStateOf(true)
+
+    fun init(recipeId: String?) {
+        if (recipeId != null) {
+            this.recipeId = recipeId
+            loadRecipe(recipeId)
+        }
+    }
 
     fun updateIngredientInput(input: DraftRecipeIngredient) {
         ingredientInput = input
@@ -54,6 +64,7 @@ class CreateRecipeScreenViewModel @Inject constructor(
     fun toggleShowAddIngredient() {
         showAddIngredient = !showAddIngredient
     }
+
     fun openAddIngredientPanel() {
         showAddIngredient = true
     }
@@ -93,7 +104,54 @@ class CreateRecipeScreenViewModel @Inject constructor(
         steps.remove(step)
     }
 
+    fun loadRecipe(id: String) {
+        viewModelScope.launch {
+            val recipe = repository.getRecipe(id)
+            title = recipe.title
+            description = recipe.description.toString()
+            visibility = recipe.visibility
+            ingredients.apply {
+                clear()
+                addAll(recipe.recipeIngredients.map { i ->
+                    DraftRecipeIngredient(
+                        i.name,
+                        i.quantity.toString(),
+                        i.unit.toString(),
+                        i.notes.toString()
+                    )
+                })
+            }
+            steps.apply {
+                clear()
+                addAll(recipe.recipeSteps.map { s ->
+                    DraftRecipeStep(
+                        recipeId = s.recipeId,
+                        sortOrder = s.sortOrder,
+                        instruction = s.instruction.toString()
+                    )
+                })
+            }
+            yieldQuantity = recipe.yieldQuantity.toString()
+            yieldUnit = recipe.yieldUnit
+            active = recipe.active
+        }
+
+    }
+
     fun saveRecipe() {
+        if (recipeId == null) {
+            saveNewRecipe()
+        } else {
+            updateRecipe()
+        }
+    }
+
+    private fun updateRecipe() {
+        Log.d("Update recipe", "Updating recipe. title=$title, desc=$description")
+
+    }
+
+    private fun saveNewRecipe() {
         val recipeTitle = title
         val recipeDescription = description
         Log.d(
@@ -108,7 +166,8 @@ class CreateRecipeScreenViewModel @Inject constructor(
                             description = recipeDescription,
                             visibility = "private",
                             yieldQuantity = 4.0,
-                            yieldUnit = "porsjoner"
+                            yieldUnit = "porsjoner",
+                            active = active
                         ),
                         ingredients = ingredients.mapIndexed { index, ingredient ->
                             IngredientInsert(
@@ -136,42 +195,4 @@ class CreateRecipeScreenViewModel @Inject constructor(
             }
         }
     }
-
-
-//
-//    var title: String by mutableStateOf("")
-//    var description: String by mutableStateOf("")
-//    fun updateTitle(it: String) {
-//        title = it
-//    }
-//
-//    fun updateDescription(it: String) {
-//        description = it
-//    }
-//
-//    fun updateYieldQuantity(it: String) {
-//        yieldQuantity = it
-//    }
-
-
-//    val id: String? = null
-//
-//    @SerialName("owner_id")
-//    val ownerId: String
-//
-//    val title: String
-//    val description: String? = null
-//    val visibility: String = "private"
-//
-//    @SerialName("yield_quantity")
-//    val yieldQuantity: Double = 4.0
-//
-//    @SerialName("yield_unit")
-//    val yieldUnit: String = "porsjoner"
-//
-//    @SerialName("created_at")
-//    val createdAt: String? = null
-//
-//    @SerialName("updated_at")
-//    val updatedAt: String? = null
 }
