@@ -5,4 +5,6 @@ plugins {
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.ksp) apply false
     id("com.google.dagger.hilt.android") version "2.60.1" apply false
+    id("com.google.gms.google-services") version "4.6.0" apply false
+    id("com.google.firebase.appdistribution") version "5.3.0" apply false
 }

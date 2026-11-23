@@ -1,12 +1,12 @@
+import com.google.firebase.appdistribution.gradle.firebaseAppDistribution
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
-    // Kotlin serialization plugin for type safe routes and navigation arguments
-//    kotlin("plugin.serialization") version "2.2.10"
     alias(libs.plugins.kotlin.serialization)
-    // Hilt
     id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
+    id("com.google.firebase.appdistribution")
 }
 
 android {
@@ -20,15 +20,20 @@ android {
         minSdk = 24
         targetSdk = 37
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
-        release {
+        getByName("release") {
             optimization {
                 enable = false
+            }
+
+            firebaseAppDistribution {
+                artifactType = "APK"
+                releaseNotes = "Første testversjon"
             }
         }
     }
@@ -98,4 +103,7 @@ dependencies {
     ksp("com.google.dagger:hilt-android-compiler:2.60.1")
 
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    implementation(platform("com.google.firebase:firebase-bom:34.18.0"))
+    implementation("com.google.firebase:firebase-appdistribution:16.0.0-beta21")
 }
