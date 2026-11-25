@@ -48,7 +48,8 @@ android {
             firebaseAppDistribution {
                 appId = System.getenv("FIREBASE_APP_ID")
                 artifactType = "APK"
-                releaseNotes = ""
+                releaseNotes = "Ny testversjon"
+                groups = "vip-testers"
             }
         }
     }
