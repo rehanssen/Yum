@@ -52,5 +52,5 @@ jobs:
         KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
         VERSION_CODE: ${{ github.run_number }}
-      run: ./gradlew assembleRelease
+      run: ./gradlew appDistributionUploadRelease
         
