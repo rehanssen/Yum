@@ -1,4 +1,5 @@
 import com.google.firebase.appdistribution.gradle.firebaseAppDistribution
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -19,10 +20,23 @@ android {
         applicationId = "com.example.yum"
         minSdk = 24
         targetSdk = 37
-        versionCode = 1
+        versionCode = System.getenv("VERSION_CODE")?.toInt() ?: 1
         versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        create("release") {
+            val keystorePath = System.getenv("KEYSTORE_PATH")
+
+            if (keystorePath != null) {
+                storeFile = file(keystorePath)
+                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("KEY_ALIAS")
+                keyPassword = System.getenv("KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
@@ -32,8 +46,9 @@ android {
             }
 
             firebaseAppDistribution {
+                appId = System.getenv("FIREBASE_APP_ID")
                 artifactType = "APK"
-                releaseNotes = "Første testversjon"
+                releaseNotes = ""
             }
         }
     }

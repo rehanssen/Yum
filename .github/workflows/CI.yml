@@ -26,6 +26,9 @@ jobs:
         
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+
+    - name: Test Gradle Plugin Portal
+      run: curl -I https://plugins.gradle.org/m2/
       
     - name: Build with Gradle
       run: ./gradlew build
