@@ -35,6 +35,9 @@ jobs:
       run: |
         test -s "$RUNNER_TEMP/release-key.jks"
 
+    - name: Make Gradle executable
+      run: chmod +x ./gradlew
+
     - name: Build release
       env:
         KEYSTORE_PATH: ${{ runner.temp }}/release-key.jks
