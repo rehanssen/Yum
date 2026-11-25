@@ -37,6 +37,16 @@ jobs:
       run: |
         echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/release-key.jks"
 
+    - name: Check signing certificate
+      run: |
+        keytool -list -v \
+          -keystore "$RUNNER_TEMP/release-key.jks" \
+          -alias "$KEY_ALIAS" \
+          -storepass "$KEYSTORE_PASSWORD" | grep SHA256
+      env:
+        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+
     - name: Verify keystore
       run: |
         test -s "$RUNNER_TEMP/release-key.jks"
