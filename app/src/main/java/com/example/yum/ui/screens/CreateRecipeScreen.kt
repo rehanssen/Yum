@@ -150,7 +150,15 @@ fun WideScreenCreateRecipe(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("${ingredient.quantity} ${ingredient.unit} ${ingredient.name}")
+                    Text(
+                        listOfNotNull(
+                            ingredient.quantity,
+                            ingredient.unit,
+                            ingredient.name
+                        )
+                            .filter { it.isNotBlank() && it != "null" }
+                            .joinToString(" ")
+                    )
 
                     IconButton(
                         onClick = { viewModel.deleteIngredient(ingredient) }
@@ -550,7 +558,15 @@ fun IngredientsSidePanel(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("${ingredient.quantity} ${ingredient.unit} ${ingredient.name}")
+                                Text(
+                                    listOfNotNull(
+                                        ingredient.quantity,
+                                        ingredient.unit,
+                                        ingredient.name
+                                    )
+                                        .filter { it.isNotBlank() && it != "null" }
+                                        .joinToString(" ")
+                                )
                                 IconButton(onClick = { viewModel.deleteIngredient(ingredient) }) {
                                     Icon(
                                         imageVector = Icons.Default.Close,

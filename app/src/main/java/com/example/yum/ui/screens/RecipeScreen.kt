@@ -165,14 +165,20 @@ fun RecipeWideScreenDisplay(
         ) {
             item { Text("Ingredienser") }
             items(recipe.recipeIngredients) { ingredient ->
-                Text("${ingredient.quantity} ${ingredient.unit} ${ingredient.name}")
+                Text(
+                    listOfNotNull(
+                        ingredient.quantity,
+                        ingredient.unit,
+                        ingredient.name
+                    ).joinToString(" ")
+                )
             }
         }
 
         LazyColumn(
             modifier = Modifier.weight(2f)
         ) {
-            item { Text("Gir ${recipe.yieldQuantity} ${recipe.yieldUnit}")}
+            item { Text("Gir ${recipe.yieldQuantity} ${recipe.yieldUnit}") }
             item { Text(recipe.description ?: "") }
             item {
                 HorizontalDivider(
@@ -205,7 +211,7 @@ fun RecipeSmallScreenDisplay(
                 .background(MaterialTheme.colorScheme.background)
                 .padding(start = 48.dp)
         ) {
-            item { Text("Gir ${recipe.yieldQuantity} ${recipe.yieldUnit}")}
+            item { Text("Gir ${recipe.yieldQuantity} ${recipe.yieldUnit}") }
             item { Text(recipe.description ?: "") }
             item {
                 HorizontalDivider(
@@ -294,7 +300,13 @@ fun IngredientsPanel(
                         }
 
                         items(groupIngredients) { ingredient ->
-                            Text("${ingredient.quantity} ${ingredient.unit} ${ingredient.name}")
+                            Text(
+                                listOfNotNull(
+                                    ingredient.quantity,
+                                    ingredient.unit,
+                                    ingredient.name
+                                ).joinToString(" ")
+                            )
                         }
                     }
                 }
