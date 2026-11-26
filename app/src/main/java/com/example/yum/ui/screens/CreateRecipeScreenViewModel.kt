@@ -29,8 +29,8 @@ class CreateRecipeScreenViewModel @Inject constructor(
     var title by mutableStateOf("")
     var description by mutableStateOf("")
     var visibility by mutableStateOf("")
-    var yieldQuantity: String by mutableStateOf("4.0")
-    var yieldUnit by mutableStateOf("porsjoner")
+    var yieldQuantity: String by mutableStateOf("")
+    var yieldUnit by mutableStateOf("")
     var active by mutableStateOf(true)
 
     val ingredients = mutableStateListOf<DraftRecipeIngredient>()
@@ -115,9 +115,10 @@ class CreateRecipeScreenViewModel @Inject constructor(
                 addAll(recipe.recipeIngredients.map { i ->
                     DraftRecipeIngredient(
                         i.name,
-                        i.quantity.toString(),
-                        i.unit.toString(),
-                        i.notes.toString()
+                        i.quantity?.toString() ?: "",
+                        i.unit ?: "",
+                        i.notes ?: "",
+                        groupNumber = i.groupNumber
                     )
                 })
             }

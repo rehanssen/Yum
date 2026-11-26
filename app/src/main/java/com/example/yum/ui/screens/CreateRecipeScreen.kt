@@ -1,6 +1,7 @@
 package com.example.yum.ui.screens
 
 import android.util.Log
+import android.widget.NumberPicker
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -60,6 +61,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.yum.model.DraftRecipeIngredient
@@ -148,7 +150,15 @@ fun WideScreenCreateRecipe(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("${ingredient.quantity} ${ingredient.unit} ${ingredient.name}")
+                    Text(
+                        listOfNotNull(
+                            ingredient.quantity,
+                            ingredient.unit,
+                            ingredient.name
+                        )
+                            .filter { it.isNotBlank() && it != "null" }
+                            .joinToString(" ")
+                    )
 
                     IconButton(
                         onClick = { viewModel.deleteIngredient(ingredient) }
@@ -182,6 +192,32 @@ fun WideScreenCreateRecipe(
                     label = { Text("Tittel") },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
                 )
+            }
+
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedTextField(
+                        modifier = Modifier.weight(1f),
+                        value = viewModel.yieldQuantity,
+                        onValueChange = { viewModel.yieldQuantity = it },
+                        label = { Text("Antall") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Next
+                        )
+                    )
+                    OutlinedTextField(
+                        modifier = Modifier.weight(1f),
+                        value = viewModel.yieldUnit,
+                        onValueChange = { viewModel.yieldUnit = it },
+                        label = { Text("Enhet") },
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                    )
+                }
             }
 
             item {
@@ -270,6 +306,32 @@ fun SmallScreenCreateRecipe(
                     label = { Text("Tittel") },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
                 )
+            }
+
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedTextField(
+                        modifier = Modifier.weight(1f),
+                        value = viewModel.yieldQuantity,
+                        onValueChange = { viewModel.yieldQuantity = it },
+                        label = { Text("Antall") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Next
+                        )
+                    )
+                    OutlinedTextField(
+                        modifier = Modifier.weight(1f),
+                        value = viewModel.yieldUnit,
+                        onValueChange = { viewModel.yieldUnit = it },
+                        label = { Text("Enhet") },
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                    )
+                }
             }
 
             item {
@@ -496,7 +558,15 @@ fun IngredientsSidePanel(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("${ingredient.quantity} ${ingredient.unit} ${ingredient.name}")
+                                Text(
+                                    listOfNotNull(
+                                        ingredient.quantity,
+                                        ingredient.unit,
+                                        ingredient.name
+                                    )
+                                        .filter { it.isNotBlank() && it != "null" }
+                                        .joinToString(" ")
+                                )
                                 IconButton(onClick = { viewModel.deleteIngredient(ingredient) }) {
                                     Icon(
                                         imageVector = Icons.Default.Close,
